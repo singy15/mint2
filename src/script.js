@@ -28,9 +28,9 @@ var app = Vue.createApp({
           this.changeMode("edit");
         } else if(e.key === "d") {
           this.del();
-        } else if(e.key === "i") {
-          this.ins(true);
         } else if(e.key === "a") {
+          this.ins(true);
+        } else if(e.key === "i") {
           this.ins(true, true);
         }
       } else if(this.mode === "edit") {
