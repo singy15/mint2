@@ -58,16 +58,18 @@ var app = Vue.createApp({
       this.selected = this.tasks[this.selectedIndex];
       
       this.$refs.item[this.selectedIndex].scrollIntoView({
-        block: 'nearest'
+        block: 'nearest',
+        behavior: 'instant',
       });
     },
 
-    setSelectionByIndex(index) {
+    setSelectionByIndex(index, behavior = 'instant') {
       this.selectedIndex = index;
       this.selected = this.tasks[index];
       this.$nextTick(function() {
         this.$refs.item[this.selectedIndex].scrollIntoView({
-          block: 'nearest'
+          block: 'nearest',
+          behavior: behavior
         });
       });
     },
@@ -98,7 +100,7 @@ var app = Vue.createApp({
         desc: ``,
         parentId: (setParent && this.selected)? ((append)? this.selected.taskId : this.selected.parentId) : null
       });
-      this.setSelectionByIndex(insertionIndex);
+      this.setSelectionByIndex(insertionIndex, 'smooth');
     },
 
     level(task, lv = 0) {
