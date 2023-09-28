@@ -1,0 +1,99 @@
+<html>
+  <head>
+    <title>mint2</title>
+    <meta charset="utf-8"/>
+    <!--
+    <link href="./css/style.css" rel="stylesheet"/> 
+    <link href="./favicon.ico" rel="icon"/>
+    -->
+    <style>
+      html,body {
+        background-color: #333;
+        color: #DDD;
+        margin: 0px;
+        padding: 0px;
+        font-size: 0.9rem;
+      }
+
+      input,textarea {
+        background-color: #333;
+        color: #DDD;
+        box-sizing: border-box;
+        font-family: system;
+      }
+
+      .gatter {
+        width: 15px;
+        text-align: center;
+      }
+
+      .ib {
+        display: inline-block;
+      }
+
+      .taskId {
+        width: 20px;
+        text-align: center;
+      }
+
+      .subject {
+        width: 200px;
+      }
+
+      .selected {
+        text-decoration: underline;
+      }
+
+      .indent {
+        width: 20px;
+      }
+
+      .task input,span {
+        line-height: 20px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div>
+
+        <div class="task" v-for="task in tasks">
+          <span class="ib gatter"></span>
+          <span class="ib indent" v-for="n in level(task)"></span>
+          <span class="ib taskId" :class="{ selected: isSelected(task) }">{{ task.taskId }}</span>
+          <span v-if="mode === 'edit' && isSelected(task)">
+            <input v-model="selected.subject" 
+              ref="editorSubject" style="width:400px; outline:none; border:solid 1px #CCC; height:20px;"/>
+            <br>
+            <span class="ib gatter"></span>
+            <span class="ib indent" v-for="n in level(task)"></span>
+            <span class="ib taskId" :class="{ selected: isSelected(task) }" style="visibility:hidden">{{ task.taskId }}</span>
+            <textarea v-model="selected.desc"
+              ref="editorDesc" style="width:400px; height:200px; outline:none; border:solid 1px #CCC"></textarea>
+          </span>
+          <span v-else class="ib subject" :class="{ selected: isSelected(task) }">{{ task.subject }}</span>
+          <br>
+        </div>
+
+          <div v-if="mode === 'edit'">
+            <!--
+            <input v-model="selected.subject" ref="editorSubject" style="width:400px; outline:none; border:solid 1px #CCC"/>
+            -->
+            <br>
+          </div>
+
+        <!--
+        <div><span class="ib gatter"></span><span class="ib taskId">1</span><span class="ib subject">Task1</span></div>
+        <div><span class="ib gatter"></span><span class="ib taskId">2</span><span class="ib subject">Task2</span></div>
+        <div><span class="ib gatter"></span><span class="ib indent"></span><span class="ib taskId selected">3</span><span class="ib subject selected">Task2-1</span></div>
+        <div><span class="ib gatter"></span><span class="ib indent"></span><span class="ib taskId">4</span><span class="ib subject">Task2-2</span></div>
+        <div><span class="ib gatter"></span><span class="ib taskId">5</span><span class="ib subject">Task3</span></div>
+        -->
+
+      </div>
+    </div>
+  </body>
+  <script src="./lib/vue.global.js"></script>
+  <script src="./src/script.js"></script>
+</html>
