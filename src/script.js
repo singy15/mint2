@@ -1,8 +1,5 @@
 
 var app = Vue.createApp({
-  // components: {
-  //   "card": Card
-  // },
   data() {
     return {
       tasks: [
@@ -59,11 +56,20 @@ var app = Vue.createApp({
       if(this.selectedIndex >= this.tasks.length) { this.selectedIndex = this.tasks.length - 1; }
 
       this.selected = this.tasks[this.selectedIndex];
+      
+      this.$refs.item[this.selectedIndex].scrollIntoView({
+        block: 'nearest'
+      });
     },
 
     setSelectionByIndex(index) {
       this.selectedIndex = index;
       this.selected = this.tasks[index];
+      this.$nextTick(function() {
+        this.$refs.item[this.selectedIndex].scrollIntoView({
+          block: 'nearest'
+        });
+      });
     },
 
     clearSelection() {
@@ -77,6 +83,8 @@ var app = Vue.createApp({
 
         if(this.tasks[this.selectedIndex - 1]) {
           this.setSelectionByIndex(this.selectedIndex - 1);
+        } else {
+          this.clearSelection();
         }
       }
     },
@@ -121,15 +129,6 @@ var app = Vue.createApp({
       this.keydown(e);
     });
   }
-
-  // watch: {
-  //   cards: {
-  //     handler() {
-  //       this.saveToLocalStorage();
-  //     },
-  //     deep: true
-  //   }
-  // },
 }).mount("#app");
 
 window.dblClick = app.dblClick;
