@@ -26,10 +26,14 @@ var app = Vue.createApp({
       if(this.mode === "normal") {
         e.preventDefault();
 
-        if(e.key === "ArrowUp" || e.key === "k") {
+        if((e.key === "ArrowUp" || e.key === "k") && !(e.shiftKey)) {
           this.sel(-1);
-        } else if(e.key === "ArrowDown" || e.key === "j") {
+        } else if((e.key === "ArrowDown" || e.key === "j") && !(e.shiftKey)) {
           this.sel(1);
+        } else if((e.key === "ArrowUp" || e.key === "K") && (e.shiftKey)) {
+          this.move(-1);
+        } else if((e.key === "ArrowDown" || e.key === "J") && (e.shiftKey)) {
+          this.move(1);
         } else if(e.key === "e") {
           this.beginEdit();
         } else if(e.key === "d") {
@@ -46,6 +50,18 @@ var app = Vue.createApp({
           this.changeMode("normal");
         }
       }
+    },
+
+    move(dir) {
+      if(!this.selected) { return; }
+      if(dir < 0 && this.selectedIndex === 0) { return; }
+      if(dir > 0 && this.selectedIndex === this.tasks.length - 1) { return; }
+      if(this.selected.parentId !== this.tasks[this.selectedIndex + dir].parentId) { return; }
+
+      let tmp = this.selected;
+      this.tasks.splice(this.selectedIndex, 1);
+      this.tasks.splice(this.selectedIndex + dir, 0, tmp);
+      this.setSelectionByIndex(this.selectedIndex + dir);
     },
 
     sel(dir) {
@@ -91,7 +107,9 @@ var app = Vue.createApp({
       if(this.selected && this.tasks.filter(x => x.parentId === this.selected.taskId).length === 0) {
         this.tasks.splice(this.selectedIndex, 1);
 
-        if(this.tasks[this.selectedIndex - 1]) {
+        if(this.tasks[this.selectedIndex]) {
+          this.setSelectionByIndex(this.selectedIndex);
+        } else if(this.tasks[this.selectedIndex - 1]) {
           this.setSelectionByIndex(this.selectedIndex - 1);
         } else {
           this.clearSelection();
