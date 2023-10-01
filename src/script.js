@@ -12,6 +12,7 @@ var app = Vue.createApp({
       mode: "normal", // normal, edit
       selected: null,
       selectedIndex: null,
+      saveTimeout: null,
     };
   },
   methods: {
@@ -20,9 +21,9 @@ var app = Vue.createApp({
       if(this.mode === "normal") {
         e.preventDefault();
 
-        if(e.key === "ArrowUp") {
+        if(e.key === "ArrowUp" || e.key === "k") {
           this.sel(-1);
-        } else if(e.key === "ArrowDown") {
+        } else if(e.key === "ArrowDown" || e.key === "j") {
           this.sel(1);
         } else if(e.key === "e") {
           this.changeMode("edit");
@@ -88,6 +89,8 @@ var app = Vue.createApp({
         } else {
           this.clearSelection();
         }
+
+        this.onTaskModified();
       }
     },
 
@@ -101,6 +104,8 @@ var app = Vue.createApp({
         parentId: (setParent && this.selected)? ((append)? this.selected.taskId : this.selected.parentId) : null
       });
       this.setSelectionByIndex(insertionIndex, 'smooth');
+
+      this.onTaskModified();
     },
 
     level(task, lv = 0) {
@@ -116,6 +121,10 @@ var app = Vue.createApp({
         return;
       }
 
+      if(this.mode === "edit" && mode === "normal") {
+        this.onTaskModified();
+      }
+
       this.mode = mode;
 
       if(mode === "edit") {
@@ -124,12 +133,33 @@ var app = Vue.createApp({
           this.$refs.editorSubject[0].focus();
         });
       }
-    }
+    },
+
+    onTaskModified() {
+      this.saveToLocalStorage();
+    },
+
+    saveToLocalStorage() {
+      if(this.saveTimeout) {
+        clearTimeout(this.saveTimeout);
+      }
+      
+      this.saveTimeout = setTimeout(() => {
+        console.log("save");
+        localStorage.setItem("/tasks", JSON.stringify(this.tasks));
+        this.saveTimeout = null;
+      }, 1000);
+    },
   },
   mounted() {
     document.addEventListener("keydown", (e) => {
       this.keydown(e);
     });
+
+    let storageContents = localStorage.getItem("/tasks");
+    if(storageContents) {
+      this.tasks = JSON.parse(storageContents);
+    }
   }
 }).mount("#app");
 
