@@ -52,6 +52,21 @@ var app = Vue.createApp({
       }
     },
 
+    onTaskClick(index) {
+      if(this.mode === 'edit') {
+        this.changeMode('normal');
+      }
+      this.setSelectionByIndex(index);
+    },
+
+    onTaskDblClick(index) {
+      if(this.mode === 'edit') {
+        this.changeMode('normal');
+      }
+      this.setSelectionByIndex(index);
+      this.beginEdit();
+    },
+
     move(dir) {
       if(!this.selected) { return; }
       if(dir < 0 && this.selectedIndex === 0) { return; }
