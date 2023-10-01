@@ -26,7 +26,7 @@ var app = Vue.createApp({
         } else if(e.key === "ArrowDown" || e.key === "j") {
           this.sel(1);
         } else if(e.key === "e") {
-          this.changeMode("edit");
+          this.beginEdit();
         } else if(e.key === "d") {
           this.del();
         } else if(e.key === "a") {
@@ -94,6 +94,19 @@ var app = Vue.createApp({
       }
     },
 
+    beginEdit() {
+      if(this.selected == null) {
+        return;
+      }
+      this.changeMode("edit");
+
+      this.$nextTick(function() {
+        console.log(this.$refs.editorSubject[0]);
+        this.$refs.editorSubject[0].focus();
+        this.$refs.editorSubject[0].select();
+      });
+    },
+
     ins(setParent = false, append = false) {
       let insertionIndex = (this.selectedIndex != null)? this.selectedIndex + 1 : 0;
       let newid = (this.tasks.length === 0)? 1 : Math.max(...this.tasks.map(x => x.taskId)) + 1;
@@ -104,6 +117,8 @@ var app = Vue.createApp({
         parentId: (setParent && this.selected)? ((append)? this.selected.taskId : this.selected.parentId) : null
       });
       this.setSelectionByIndex(insertionIndex, 'smooth');
+
+      // this.beginEdit();
 
       this.onTaskModified();
     },
@@ -117,22 +132,12 @@ var app = Vue.createApp({
     },
 
     changeMode(mode) {
-      if(mode === "edit" && this.selected == null) {
-        return;
-      }
-
       if(this.mode === "edit" && mode === "normal") {
         this.onTaskModified();
       }
 
       this.mode = mode;
 
-      if(mode === "edit") {
-        this.$nextTick(function() {
-          console.log(this.$refs.editorSubject[0]);
-          this.$refs.editorSubject[0].focus();
-        });
-      }
     },
 
     onTaskModified() {
