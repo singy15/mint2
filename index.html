@@ -32,12 +32,10 @@
       }
 
       .taskId {
-        width: 20px;
-        text-align: center;
+        text-align: right;
       }
 
       .subject {
-        width: 200px;
       }
 
       .selected {
@@ -52,6 +50,14 @@
         line-height: 20px;
       }
 
+      .spacer {
+        width: 10px;
+      }
+
+      #app {
+        width: 100%;
+      }
+
     </style>
   </head>
   <body>
@@ -61,14 +67,16 @@
         <div class="task" ref="item" v-for="task in tasks">
           <span class="ib gatter"></span>
           <span class="ib indent" v-for="n in level(task)"></span>
-          <span class="ib taskId" :class="{ selected: isSelected(task) }">{{ task.taskId }}</span>
+          <span class="ib taskId" :class="{ selected: isSelected(task) }" :style="{ width: `${widthId}px` }">{{ task.taskId }}</span>
+          <span class="ib spacer"></span>
           <span v-if="mode === 'edit' && isSelected(task)">
             <input v-model="selected.subject" 
               ref="editorSubject" style="width:400px; outline:none; border:solid 1px #CCC; height:20px;"/>
             <br>
             <span class="ib gatter"></span>
             <span class="ib indent" v-for="n in level(task)"></span>
-            <span class="ib taskId" :class="{ selected: isSelected(task) }" style="visibility:hidden">{{ task.taskId }}</span>
+            <span class="ib taskId" :class="{ selected: isSelected(task) }"  :style="{ visibility: `hidden`, width: `${widthId}px` }">{{ task.taskId }}</span>
+            <span class="ib spacer"></span>
             <textarea v-model="selected.desc"
               ref="editorDesc" style="width:400px; height:200px; outline:none; border:solid 1px #CCC"></textarea>
           </span>

@@ -15,6 +15,11 @@ var app = Vue.createApp({
       saveTimeout: null,
     };
   },
+  computed: {
+    widthId() {
+      return 10 * Math.max(...this.tasks.map(x => x.taskId.toString().length));
+    }
+  },
   methods: {
     keydown(e) {
       console.log(e);
