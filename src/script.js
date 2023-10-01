@@ -22,7 +22,7 @@ var app = Vue.createApp({
   },
   methods: {
     keydown(e) {
-      console.log(e);
+      // console.log(e);
       if(this.mode === "normal") {
         e.preventDefault();
 
@@ -56,12 +56,40 @@ var app = Vue.createApp({
       if(!this.selected) { return; }
       if(dir < 0 && this.selectedIndex === 0) { return; }
       if(dir > 0 && this.selectedIndex === this.tasks.length - 1) { return; }
-      if(this.selected.parentId !== this.tasks[this.selectedIndex + dir].parentId) { return; }
 
-      let tmp = this.selected;
-      this.tasks.splice(this.selectedIndex, 1);
-      this.tasks.splice(this.selectedIndex + dir, 0, tmp);
+      let i = this.selectedIndex + 1;
+      while(this.tasks[i] && this.isChildrenOf(this.selected, this.tasks[i])) {
+        i++;
+      }
+
+      let deleteCnt = i - 1 - this.selectedIndex + 1;
+
+      if(dir > 0) {
+        if(!(this.tasks[this.selectedIndex + deleteCnt] && this.tasks[this.selectedIndex + deleteCnt].parentId === this.selected.parentId)) {
+          return;
+        }
+      } else if(dir < 0) {
+        if(!(this.tasks[this.selectedIndex + dir].parentId === this.selected.parentId)) {
+          return;
+        }
+      }
+
+      let tmp = this.tasks.splice(this.selectedIndex, deleteCnt);
+      this.tasks.splice(this.selectedIndex + dir, 0, ...tmp);
       this.setSelectionByIndex(this.selectedIndex + dir);
+    },
+
+    sibling(task, ls = []) {
+      ls.push(task);
+      if(task.parentId) {
+        return this.sibling(this.tasks.filter(x => x.taskId === task.parentId)[0], ls);
+      } else {
+        return ls;
+      }
+    },
+
+    isChildrenOf(parentTask, task) {
+      return this.sibling(task).some(x => x.taskId === parentTask.taskId);
     },
 
     sel(dir) {
