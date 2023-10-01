@@ -24,7 +24,8 @@
 
       .gatter {
         width: 15px;
-        text-align: center;
+        text-align: right;
+        font-size: 0.80em;
       }
 
       .ib {
@@ -33,6 +34,7 @@
 
       .taskId {
         text-align: right;
+        font-size: 0.85em;
       }
 
       .subject {
@@ -65,7 +67,7 @@
       <div>
 
         <div class="task" ref="item" v-for="task in tasks">
-          <span class="ib gatter"></span>
+          <span class="ib gatter">{{ gatter(task) }}</span>
           <span class="ib indent" v-for="n in level(task)"></span>
           <span class="ib taskId" :class="{ selected: isSelected(task) }" :style="{ width: `${widthId}px` }">{{ task.taskId }}</span>
           <span class="ib spacer"></span>

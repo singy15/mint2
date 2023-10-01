@@ -36,6 +36,8 @@ var app = Vue.createApp({
           this.del();
         } else if(e.key === "a") {
           this.ins(true);
+        } else if(e.key === "n") {
+          this.ins(false,false,this.tasks.length);
         } else if(e.key === "i") {
           this.ins(true, true);
         }
@@ -112,8 +114,8 @@ var app = Vue.createApp({
       });
     },
 
-    ins(setParent = false, append = false) {
-      let insertionIndex = (this.selectedIndex != null)? this.selectedIndex + 1 : 0;
+    ins(setParent = false, append = false, index = null) {
+      let insertionIndex = (index != null)? index : ((this.selectedIndex != null)? this.selectedIndex + 1 : 0);
       let newid = (this.tasks.length === 0)? 1 : Math.max(...this.tasks.map(x => x.taskId)) + 1;
       this.tasks.splice(insertionIndex, 0, {
         taskId: newid,
@@ -160,6 +162,12 @@ var app = Vue.createApp({
         this.saveTimeout = null;
       }, 1000);
     },
+
+    gatter(task) {
+      if(this.selected == task) {
+        return `>`;
+      }
+    }
   },
   mounted() {
     document.addEventListener("keydown", (e) => {
