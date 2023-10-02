@@ -22,7 +22,6 @@ var app = Vue.createApp({
   },
   methods: {
     keydown(e) {
-      // console.log(e);
       if(this.mode === "normal") {
         e.preventDefault();
 
@@ -72,12 +71,13 @@ var app = Vue.createApp({
       if(dir < 0 && this.selectedIndex === 0) { return; }
       if(dir > 0 && this.selectedIndex === this.tasks.length - 1) { return; }
 
-      let i = this.selectedIndex + 1;
-      while(this.tasks[i] && this.isChildrenOf(this.selected, this.tasks[i])) {
-        i++;
-      }
+      // let i = this.selectedIndex + 1;
+      // while(this.tasks[i] && this.isChildrenOf(this.selected, this.tasks[i])) {
+      //   i++;
+      // }
 
-      let deleteCnt = i - 1 - this.selectedIndex + 1;
+      // let deleteCnt = i - 1 - this.selectedIndex + 1;
+      let deleteCnt = this.branchCount(this.selectedIndex);
 
       if(dir > 0) {
         if(!(this.tasks[this.selectedIndex + deleteCnt] && this.tasks[this.selectedIndex + deleteCnt].parentId === this.selected.parentId)) {
@@ -89,9 +89,20 @@ var app = Vue.createApp({
         }
       }
 
+
       let tmp = this.tasks.splice(this.selectedIndex, deleteCnt);
-      this.tasks.splice(this.selectedIndex + dir, 0, ...tmp);
-      this.setSelectionByIndex(this.selectedIndex + dir);
+
+      let interval = dir * this.branchCount(this.selectedIndex + dir);
+      // if(dir > 0) {
+      //   interval = this.branchCount(this.selectedIndex + dir);
+      //   if(this.branchCount(this.selectedIndex + dir) > 1) {
+      //     interval = interval + 1;
+      //   }
+      // }
+      // interval = dir;
+
+      this.tasks.splice(this.selectedIndex + interval, 0, ...tmp);
+      this.setSelectionByIndex(this.selectedIndex + interval);
     },
 
     sibling(task, ls = []) {
@@ -101,6 +112,15 @@ var app = Vue.createApp({
       } else {
         return ls;
       }
+    },
+
+    branchCount(rootIndex) {
+      let i = rootIndex + 1;
+      let root = this.tasks[rootIndex];
+      while(this.tasks[i] && this.isChildrenOf(root, this.tasks[i])) {
+        i++;
+      }
+      return i - 1 - rootIndex + 1;
     },
 
     isChildrenOf(parentTask, task) {
@@ -169,7 +189,6 @@ var app = Vue.createApp({
       this.changeMode("edit");
 
       this.$nextTick(function() {
-        console.log(this.$refs.editorSubject[0]);
         this.$refs.editorSubject[0].focus();
         this.$refs.editorSubject[0].select();
       });
@@ -177,6 +196,9 @@ var app = Vue.createApp({
 
     ins(setParent = false, append = false, index = null) {
       let insertionIndex = (index != null)? index : ((this.selectedIndex != null)? this.selectedIndex + 1 : 0);
+      if(setParent && !append && !index) {
+        insertionIndex = insertionIndex + this.branchCount(this.selectedIndex) - 1;
+      }
       let newid = (this.tasks.length === 0)? 1 : Math.max(...this.tasks.map(x => x.taskId)) + 1;
       this.tasks.splice(insertionIndex, 0, {
         taskId: newid,
@@ -218,7 +240,6 @@ var app = Vue.createApp({
       }
       
       this.saveTimeout = setTimeout(() => {
-        console.log("save");
         localStorage.setItem("/tasks", JSON.stringify(this.tasks));
         this.saveTimeout = null;
       }, 1000);
