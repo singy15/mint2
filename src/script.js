@@ -270,6 +270,13 @@ var app = Vue.createApp({
       }
 
       return style;
+    },
+    shortDesc(task) {
+      if(task.desc === "" || task.desc === "undefined") {
+        return "";
+      }
+      
+      return task.desc.split("\n").slice(0,3).join("\n");
     }
   },
   mounted() {

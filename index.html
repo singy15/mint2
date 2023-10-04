@@ -73,6 +73,7 @@
           <span class="ib gatter"></span>
           <span class="ib taskId" :class="{ selected: isSelected(task) }" :style="styleTask(task, 'taskId')">{{ task.taskId }}</span>
           <span class="ib spacer"></span>
+
           <span v-if="mode === 'edit' && isSelected(task)">
             <input v-model="selected.subject" 
               @click.stop
@@ -89,6 +90,18 @@
               ref="editorDesc" style="width:400px; height:200px; outline:none; border:solid 1px #CCC"></textarea>
           </span>
           <span v-else class="ib subject" :class="{ selected: isSelected(task) }" :style="styleTask(task)">{{ task.subject }}</span>
+
+          <br v-if="task.desc"/>
+          <span v-if="task.desc">
+            <span class="ib gatter"></span>
+            <span class="ib indent" v-for="n in level(task)"></span>
+            <span class="ib gatter"></span>
+            <span class="ib gatter"></span>
+            <span class="ib taskId" :class="{ selected: isSelected(task) }"  :style="{ visibility: `hidden`, width: `${widthId}px` }">{{ task.taskId }}</span>
+            <span class="ib spacer"></span>
+            <span style="color:#77a; font-size:0.85em">{{ shortDesc(task) }}</span>
+          </span>
+
           <br>
         </div>
 
