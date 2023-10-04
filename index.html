@@ -99,7 +99,7 @@
             <span class="ib gatter"></span>
             <span class="ib taskId" :class="{ selected: isSelected(task) }"  :style="{ visibility: `hidden`, width: `${widthId}px` }">{{ task.taskId }}</span>
             <span class="ib spacer"></span>
-            <span style="color:#77a; font-size:0.85em">{{ shortDesc(task) }}</span>
+            <span :style="{color:(task.state === '-')? '#777' : '#77a', fontSize:'0.85em'}">{{ shortDesc(task) }}</span>
           </span>
 
           <br>
