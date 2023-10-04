@@ -69,7 +69,9 @@
         <div class="task" ref="item" v-for="(task, i) in tasks" @click="onTaskClick(i)" @dblclick="onTaskDblClick(i)">
           <span class="ib gatter">{{ gatter(task) }}</span>
           <span class="ib indent" v-for="n in level(task)"></span>
-          <span class="ib taskId" :class="{ selected: isSelected(task) }" :style="{ width: `${widthId}px` }">{{ task.taskId }}</span>
+          <span class="ib gatter" :style="styleTask(task)">{{ task.state }}</span>
+          <span class="ib gatter"></span>
+          <span class="ib taskId" :class="{ selected: isSelected(task) }" :style="styleTask(task, 'taskId')">{{ task.taskId }}</span>
           <span class="ib spacer"></span>
           <span v-if="mode === 'edit' && isSelected(task)">
             <input v-model="selected.subject" 
@@ -77,12 +79,14 @@
             <br>
             <span class="ib gatter"></span>
             <span class="ib indent" v-for="n in level(task)"></span>
+            <span class="ib gatter"></span>
+            <span class="ib gatter"></span>
             <span class="ib taskId" :class="{ selected: isSelected(task) }"  :style="{ visibility: `hidden`, width: `${widthId}px` }">{{ task.taskId }}</span>
             <span class="ib spacer"></span>
             <textarea v-model="selected.desc"
               ref="editorDesc" style="width:400px; height:200px; outline:none; border:solid 1px #CCC"></textarea>
           </span>
-          <span v-else class="ib subject" :class="{ selected: isSelected(task) }">{{ task.subject }}</span>
+          <span v-else class="ib subject" :class="{ selected: isSelected(task) }" :style="styleTask(task)">{{ task.subject }}</span>
           <br>
         </div>
 

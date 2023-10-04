@@ -37,6 +37,16 @@ var app = Vue.createApp({
           this.beginEdit();
         } else if(e.key === "d") {
           this.del();
+        } else if(e.key === "*") {
+          this.changeState("*");
+        } else if(e.key === ">") {
+          this.changeState(">");
+        } else if(e.key === "?") {
+          this.changeState("?");
+        } else if(e.key === "-") {
+          this.changeState("-");
+        } else if(e.key === "x") {
+          this.changeState("x");
         } else if(e.key === "a") {
           this.ins(true);
         } else if(e.key === "n") {
@@ -64,6 +74,11 @@ var app = Vue.createApp({
       }
       this.setSelectionByIndex(index);
       this.beginEdit();
+    },
+
+    changeState(state) {
+      if(!this.selected) { return; }
+      this.selected.state = state;
     },
 
     move(dir) {
@@ -191,6 +206,7 @@ var app = Vue.createApp({
         taskId: newid,
         subject: `Untitled Task ${newid}`,
         desc: ``,
+        state: "*",
         parentId: (setParent && this.selected)? ((append)? this.selected.taskId : this.selected.parentId) : null
       });
       this.setSelectionByIndex(insertionIndex, 'smooth');
@@ -234,8 +250,25 @@ var app = Vue.createApp({
 
     gatter(task) {
       if(this.selected == task) {
-        return `>`;
+        return `>>`;
       }
+    },
+
+    styleTask(task, col = "") {
+      let style = {};
+      if(task.state === ">") {
+        style.color = "#5F5";
+      } else if(task.state === "-") {
+        style.color = "#AAA";
+      } else if(task.state === "?") {
+        style.color = "#F55";
+      }
+
+      if(col === "taskId") {
+        style.width = `${this.widthId}px`;
+      }
+
+      return style;
     }
   },
   mounted() {
@@ -245,7 +278,16 @@ var app = Vue.createApp({
 
     let storageContents = localStorage.getItem("/tasks");
     if(storageContents) {
-      this.tasks = JSON.parse(storageContents);
+      let tasks = JSON.parse(storageContents);
+  
+      if(tasks.length > 0) {
+        // ver 1 -> 2
+        if(tasks[0].state === undefined) {
+          tasks.map(x => x.state = "*");
+        }
+      }
+
+      this.tasks = tasks;
     }
   }
 }).mount("#app");
