@@ -71,38 +71,25 @@ var app = Vue.createApp({
       if(dir < 0 && this.selectedIndex === 0) { return; }
       if(dir > 0 && this.selectedIndex === this.tasks.length - 1) { return; }
 
-      // let i = this.selectedIndex + 1;
-      // while(this.tasks[i] && this.isChildrenOf(this.selected, this.tasks[i])) {
-      //   i++;
-      // }
+      let candidates = this.tasks.filter(x => x.parentId === this.selected.parentId);
+      let branch = this.tasks.slice(this.selectedIndex, this.selectedIndex + this.branchCount(this.selectedIndex));
+      let index = candidates.indexOf(this.selected);
+      let destination = candidates[index + dir];
 
-      // let deleteCnt = i - 1 - this.selectedIndex + 1;
-      let deleteCnt = this.branchCount(this.selectedIndex);
-
-      if(dir > 0) {
-        if(!(this.tasks[this.selectedIndex + deleteCnt] && this.tasks[this.selectedIndex + deleteCnt].parentId === this.selected.parentId)) {
-          return;
-        }
-      } else if(dir < 0) {
-        if(!(this.tasks[this.selectedIndex + dir].parentId === this.selected.parentId)) {
-          return;
-        }
+      if(!destination) {
+        return;
       }
 
+      let destinationIndex = this.tasks.indexOf(destination);
+      let destinationBranch = this.tasks.slice(destinationIndex, destinationIndex + this.branchCount(destinationIndex));
+      
+      let elements = (dir > 0)? destinationBranch.concat(branch) : branch.concat(destinationBranch);
 
-      let tmp = this.tasks.splice(this.selectedIndex, deleteCnt);
+      let beginIndex = (dir > 0)? this.selectedIndex : destinationIndex;
 
-      let interval = dir * this.branchCount(this.selectedIndex + dir);
-      // if(dir > 0) {
-      //   interval = this.branchCount(this.selectedIndex + dir);
-      //   if(this.branchCount(this.selectedIndex + dir) > 1) {
-      //     interval = interval + 1;
-      //   }
-      // }
-      // interval = dir;
+      this.tasks.splice(beginIndex, elements.length, ...elements);
 
-      this.tasks.splice(this.selectedIndex + interval, 0, ...tmp);
-      this.setSelectionByIndex(this.selectedIndex + interval);
+      this.setSelectionByIndex(this.tasks.indexOf(this.selected));
     },
 
     sibling(task, ls = []) {
