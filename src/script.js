@@ -79,6 +79,7 @@ var app = Vue.createApp({
     changeState(state) {
       if(!this.selected) { return; }
       this.selected.state = state;
+      this.onTaskModified();
     },
 
     move(dir) {
