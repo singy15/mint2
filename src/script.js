@@ -1,4 +1,28 @@
 
+window.onload = function() {
+  Notification.requestPermission();
+  setInterval(checkTime, 1000);   
+};
+
+const checkTime = function() {
+  let previousMinutes;
+  const options = {
+    body: "mint2",
+    // icon: ""
+  };
+  return function() {
+    const currentTime = new Date();
+    const minutes = currentTime.getMinutes();
+    if (previousMinutes !== minutes && minutes % 15 === 0) {
+      previousMinutes = minutes;
+      const notification = new Notification("15 minutes passed.", options);
+    }
+  }  
+}();
+
+let alarmMng = new AlarmManager();
+alarmMng.enable();
+
 var app = Vue.createApp({
   data() {
     return {
@@ -53,6 +77,39 @@ var app = Vue.createApp({
           this.ins(false,false,this.tasks.length);
         } else if(e.key === "i") {
           this.ins(true, true);
+        } else if(e.key === "t") {
+          let minutes = parseInt(prompt("minutes:"), 10);
+
+          if(Number.isNaN(minutes)) {
+            alert("invalid minutes");
+            return;
+          }
+
+          let message = prompt("message:");
+
+          if(message == null || message === undefined) {
+            alert("invalid message");
+            return;
+          }
+
+          let now = new Date();
+          now.setMinutes(now.getMinutes() + minutes);
+          alarmMng.addAlarm(message, {
+            triggerTime: now.toISOString()
+          });
+        } else if(e.key === "p") {
+          let time = prompt("alarm at:", (new Date()).toISOString());
+          let date = new Date(time);
+
+          const isInvalidDate = (date) => Number.isNaN(date.getTime());
+          if(isInvalidDate(date)) {
+            alert("invalid date!");
+            return;
+          }
+
+          alarmMng.addAlarm(message, {
+            triggerTime: date.toISOString()
+          });
         }
       } else if(this.mode === "edit") {
         if(e.key === "Escape") {
