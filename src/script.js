@@ -37,6 +37,7 @@ var app = Vue.createApp({
       selected: null,
       selectedIndex: null,
       saveTimeout: null,
+      alarms: []
     };
   },
   computed: {
@@ -45,6 +46,10 @@ var app = Vue.createApp({
     }
   },
   methods: {
+    onChangeAlarms(alarms) {
+      this.alarms = [];
+      this.alarms = alarms;
+    },
     keydown(e) {
       if(this.mode === "normal") {
         e.preventDefault();
@@ -354,6 +359,9 @@ var app = Vue.createApp({
 
       this.tasks = tasks;
     }
+
+    this.alarms = alarmMng.alarms;
+    alarmMng.onChange = this.onChangeAlarms;
   }
 }).mount("#app");
 
