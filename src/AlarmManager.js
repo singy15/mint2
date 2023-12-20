@@ -40,7 +40,7 @@ class AlarmManager {
   }
 
   deleteAlarm(id) {
-    this.alarms = this.alarms.filter(a => a.id === id);
+    this.alarms = this.alarms.filter(a => !(a.id === id));
     this.saveAlarms();
     this.notifyChange();
   }
